@@ -4,12 +4,15 @@ project( particle_filter )
 
 find_package( catkin REQUIRED COMPONENTS
     rospy
+    nav_msgs
+    std_msgs
     sensor_msgs
     geometry_msgs
+    message_generation
 )
 
 catkin_package(
-    CATKIN_DEPENDS
+    CATKIN_DEPENDS message_runtime
 )
 
 include_directories(

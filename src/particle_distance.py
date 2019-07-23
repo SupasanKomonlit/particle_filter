@@ -42,7 +42,10 @@ class ParticleDistance:
     def __init__( self , particles ):
 
         self.particles = np.array(particles)
-        self.weights = np.full( len( self.particles ) , 1.0/len( self.particles))
+        self.weights = np.full( len( self.particles ) , 1.0/len( self.particles) , dtype=np.float )
+
+        self.mean = ( 0 , 0 , 0 )
+        self.var = ( 0 , 0 , 0 )
 
     # In your input please input about ( position(t-1) - position(t) ) or inverse movement of your
     # About concept of update
@@ -52,15 +55,16 @@ class ParticleDistance:
     #   multiply will use to gain error to spread particle
     def predict( self, movement, multiply ):
 
-        for particle in self.particles
+        for particle in self.particles:
             error = random_error( multiply )
             particle += movement + error
 
     # Update function is function to updated measurement to help use decrease spread of particle
     def update( self , measurement , variance ):
-        
-        self.weights[:] *= scipy.stats.norm( np.linalg.norm( self.particles[ run ] ) , variance).pdf(
-            measurement )
+
+        for run in range( len( self.particles ) ): 
+            self.weights[run] = scipy.stats.norm( np.linalg.norm( self.particles[run] ),variance).pdf(
+                measurement )
 
         self.weights += 1.e-3000                    # avoids round of zero
         self.weights /= np.sum( self.weights )      # normalize
@@ -75,6 +79,12 @@ class ParticleDistance:
 
     # Estimate function use algorithm average to find answer and variance
     def estimate( self ):
-        mean = np.average( self.current_particle , weights=self.weights , axis=0 )
+        mean = np.average( self.particles , weights=self.weights , axis=0 )
         var = np.average( ( mean - self.particles )**2 , weights=self.weights , axis=0 )
+        self.mean = mean
+        self.var = var
         return mean , var
+
+    def __repr__( self ):
+        return "========================RESULT=============================\nDISTANCE : {:7.3f} {:7.3f} {:7.3f}\nVARIANCE : {:7.3f} {:7.3f} {:7.3f}".format(
+            self.mean[0] , self.mean[1] , self.mean[2] , self.var[0] , self.var[1] , self.var[2] )

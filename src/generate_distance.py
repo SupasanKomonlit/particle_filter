@@ -33,16 +33,21 @@ QUATERNIONS = (
 
 def generate_distance( start , end , step ):
 
+    print( "Generating point by distance {:6.3f}:{:6.3f}:{:6.3f}".format(
+        start , step , end ) )
+
     points = np.array( [] , dtype=np.float )
 
     current  = start 
+
+    answer = np.array( [] , dtype=np.float )
 
     while current < end :
 
         for quaternion in QUATERNIONS :
             answer = np.append( answer , tf_handle.quaternion_multiply(
                 tf_handle.quaternion_multiply( tf_handle.quaternion_inverse( quaternion ) 
-                    , ( current_distance , 0 , 0 , 0 ) )
+                    , ( current , 0 , 0 , 0 ) )
                 , quaternion
             )[0:3] )
 

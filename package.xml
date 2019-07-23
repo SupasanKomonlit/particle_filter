@@ -2,7 +2,7 @@
 
 <package format="2">
 
-    <name>beginner_filter</name>
+    <name>particle_filter</name>
 
     <version>1.0.0</version>
 
@@ -24,5 +24,11 @@
 
     <build_depend>geometry_msgs</build_depend>
     <exec_depend>geometry_msgs</exec_depend>
+
+    <build_depend>nav_msgs</build_depend>
+    <exec_depend>nav_msgs</exec_depend>
+
+    <build_depend>message_generation</build_depend>
+    <exec_depend>message_runtime</exec_depend>
 
 </package>
