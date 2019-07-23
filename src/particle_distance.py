@@ -32,3 +32,49 @@ def random_error( multiply ):
         count += 1
 
     return error * multiply
+
+def neff( weights ):
+    return 1. /np.sum( weights )
+
+class ParticleDistance:
+
+    # init function use to setup a bunch of particle
+    def __init__( self , particles ):
+
+        self.particles = np.array(particles)
+        self.weights = np.full( len( self.particles ) , 1.0/len( self.particles))
+
+    # In your input please input about ( position(t-1) - position(t) ) or inverse movement of your
+    # About concept of update
+    #   If you input your update distance will more if you move more
+    # Two parameter is
+    #   movement in this class this movement show you ditance which should to be
+    #   multiply will use to gain error to spread particle
+    def predict( self, movement, multiply ):
+
+        for particle in self.particles
+            error = random_error( multiply )
+            particle += movement + error
+
+    # Update function is function to updated measurement to help use decrease spread of particle
+    def update( self , measurement , variance ):
+        
+        self.weights[:] *= scipy.stats.norm( np.linalg.norm( self.particles[ run ] ) , variance).pdf(
+            measurement )
+
+        self.weights += 1.e-3000                    # avoids round of zero
+        self.weights /= np.sum( self.weights )      # normalize
+
+        if neff( self.weights ) < ( len( self.particles ) / 2 ):
+            indexes = filterpy.monte_carlo.systematic_resample( self.weights )
+            self.particles[:] = self.particles[indexes]
+            self.weights.fill( 1 / len( self.weights ) )
+            assert np.allclose( self.weights , 1.0 / len( self.particles ) )
+        else:
+            print( "Don't resample")
+
+    # Estimate function use algorithm average to find answer and variance
+    def estimate( self ):
+        mean = np.average( self.current_particle , weights=self.weights , axis=0 )
+        var = np.average( ( mean - self.particles )**2 , weights=self.weights , axis=0 )
+        return mean , var
